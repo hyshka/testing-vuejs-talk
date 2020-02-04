@@ -65,11 +65,11 @@ const ButtonCounter = {
 
 ```
 const wrapper = mount(ButtonCounter);
-
+wrapper.html()
 >> <button>You clicked me <span>0</span> times.</button>
 
 const wrapper = shallowMount(ButtonCounter);
-
+wrapper.html()
 >> <button>You clicked me <count-stub count="0"></count-stub> times.</button>
 ```
 
@@ -96,7 +96,6 @@ const Message = {
 const wrapper = shallowMount(Message)
 >> [Vue warn]: Failed to resolve filter: placeholder
 
-
 import { createLocalVue, shallowMount } from "@vue/test-utils"
 import Vue2Filters from "vue2-filters"
 
@@ -107,6 +106,7 @@ const wrapper2 = shallowMount(Message, {
     localVue,
 })
 
+wrapper.html()
 >> <div>Text if msg is missing</div>
 ```
 
@@ -118,6 +118,7 @@ const wrapper2 = shallowMount(Message, {
 const wrapper = shallowMount(ButtonCounter)
 wrapper.trigger("click")
 
+wrapper.text()
 >> You clicked me 1 times.
 
 it("using nextTick", async () => {
@@ -125,7 +126,7 @@ it("using nextTick", async () => {
     wrapper.trigger("click")
     await Vue.nextTick()
 
-    console.log("with nextTick", wrapper.text())
+    wrapper.text()
     >> You clicked me 1 times.
 })
 ```
@@ -159,6 +160,7 @@ const AsyncButtonCounter = {
 const wrapper = shallowMount(AsyncButtonCounter)
 wrapper.trigger("click")
 
+wrapper.text()
 >> You clicked me 0 times.
 ```
 
@@ -173,12 +175,15 @@ const wrapper = shallowMount(AsyncButtonCounter)
 wrapper.trigger("click")
 await flushPromises()
 
+wrapper.text()
 >> You clicked me 1 times.
 ```
 
 ---
 
 ## Mocking the Vuex store within components
+
+TODO
 
 ---
 
@@ -250,6 +255,8 @@ wrapper.vm.date
 ---
 
 ## Mocking methods injected into the Vue instance
+
+TODO
 
 ---
 
