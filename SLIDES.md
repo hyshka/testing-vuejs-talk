@@ -256,7 +256,101 @@ wrapper.vm.date
 
 ## Mocking methods injected into the Vue instance
 
-TODO
+```
+const LoginView = {
+  methods: {
+    submitForm() {
+      if (this.$route.query.redirect) {
+        this.$router.push(this.$route.query.redirect)
+      } else {
+        this.$router.push("/dashboard")
+      }
+    },
+  },
+  ...
+}
+
+const wrapper = shallowMount(LoginView, {
+  mocks: {
+    $route: {
+      query: {
+        redirect: "/dashboard/resource",
+      },
+    },
+    $router: {
+      push: jest.fn(),
+    },
+  },
+})
+```
+
+---
+
+## Mocking methods for each test is more cumbersome with larger components
+
+```
+const store = new Vuex.Store({
+  modules: {
+    auth: {
+      namespaced: true,
+      actions: {
+        signup: jest.fn().mockResolvedValue(),
+        signupCompanyUser: jest.fn().mockResolvedValue(),
+        signupOrganizationUser: jest.fn().mockResolvedValue(),
+      },
+    },
+  },
+})
+
+const wrapper = shallowMount(Signup, {
+  localVue,
+  mocks: {
+    $router: {
+      push: jest.fn(),
+    },
+    $route: {
+      query: {},
+    },
+  },
+  stubs: {
+    RouterLink: true,
+    ElSelect: ElSelect,
+    ElOption: ElOption,
+  },
+  store,
+})
+```
+
+---
+
+## Using factory functions to keep it DRY
+
+```
+import merge from "lodash/merge"
+
+function createWrapper(overrides) {
+  const defaultMountingOptions = {
+    mocks: {
+      $route: {
+        query: {},
+      },
+      $router: {
+        push: jest.fn(),
+      },
+    },
+  }
+  return shallowMount(LoginView, merge(defaultMountingOptions, overrides))
+}
+
+const mocks = {
+  $route: {
+    query: {
+      redirect: "/dashboard/resource",
+    },
+  },
+}
+const wrapper = createWrapper({ mocks })
+```
 
 ---
 
