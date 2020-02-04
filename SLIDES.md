@@ -181,12 +181,6 @@ wrapper.text()
 
 ---
 
-## Mocking the Vuex store within components
-
-TODO
-
----
-
 ## Stubbing components
 
 ```
@@ -350,6 +344,104 @@ const mocks = {
   },
 }
 const wrapper = createWrapper({ mocks })
+```
+
+---
+
+## Testing Vuex in components
+
+```
+const VuexButtonCounter = {
+  template: `<button v-on:click="increment('hello')">You clicked me {{count}} times.</button>`,
+  computed: {
+    ...mapState({
+      count: state => state.count,
+    }),
+  },
+  methods: {
+    ...mapActions(["increment"]),
+  },
+}
+```
+
+---
+
+## Recommended in the Vue Test Utils docs
+
+```
+const localVue = createLocalVue()
+localVue.use(Vuex)
+
+const actions = {
+  increment: jest.fn(),
+}
+const state = {
+  count: 0,
+}
+
+const store = new Vuex.Store({ actions, state })
+const wrapper = shallowMount(VuexButtonCounter, {
+  localVue,
+  store,
+})
+
+wrapper.trigger("click")
+
+expect(actions.increment).toHaveBeenCalledWith(expect.anything(), "hello")
+>> {"commit": [Function boundCommit], "dispatch": [Function boundDispatch], "getters": {}, "rootGetters": {}, "rootState": {"count": 0}, "state": {"count": 0}}, "hello"
+```
+
+---
+
+## A more complex example
+
+```
+const VuexNamespacedButtonCounter = {
+  template: `<button v-on:click="increment('hello')">You clicked me {{count}} times.</button>`,
+  computed: {
+    ...mapState("counter", {
+      count: state => state.count,
+    }),
+  },
+  methods: {
+    ...mapActions("counter", ["increment"]),
+  },
+}
+```
+
+---
+
+## Mocking `store.dispatch`
+
+```
+const localVue = createLocalVue()
+localVue.use(Vuex)
+
+const storeOptions = {
+  modules: {
+    counter: {
+      namespaced: true,
+      actions: {
+        increment: jest.fn(),
+      },
+      state: {
+        count: 0,
+      },
+    },
+  },
+}
+const store = new Vuex.Store(storeOptions)
+store.dispatch = jest.fn()
+
+const wrapper = shallowMount(VuexNamespacedButtonCounter, {
+  localVue,
+  store,
+})
+
+wrapper.trigger("click")
+
+expect(store.dispatch).toHaveBeenCalledWith("counter/increment", "hello")
+>> "counter/increment", "hello"
 ```
 
 ---
