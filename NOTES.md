@@ -2,9 +2,9 @@
 - Intro
 - 0. Mounting components
 - 1. Testing asynchronous DOM updates and Promises
-- 2. Mocking the Vuex store within components
 - 3. Stubbing components
 - 4. Mocking methods injected into the Vue instance
+- 2. Mocking the Vuex store within components
 - Outro
 
 ## Intro
@@ -14,6 +14,9 @@
   - not much documentation out there
 - assume working knowledge of Vue, Vuex, and Jest
 - will be working with the official unit testing library, Vue Test Utils
+- a lot of info, do my best to get through it, slides available on GitHub
+- because I want to give as much info, make a note if you have any questions,
+    and I'll do my best to answer at the end
 
 ## Mounting components
 - topics: vue-test-utils
@@ -48,23 +51,6 @@
   - it returns a promise that resolves when the browser has hit it's next "tick"
       in the event queue
 
-## Testing Vuex in components
-- topics: Vuex, namespaced modules
-- component with simple store is straightforward
-    - if a little verbose
-    - this is what they recommend in the vue-test-utils docs
-    - some examples of passing in a mock $store into mocks
-    - never worked, probably only for basic cases
-    - better to use a Vuex instance
-    - assertions are a bit weird
-    - first arg is "context" just like in a real Vuex action
-- mocking dispatch
-  - simplifies things for larger components
-  - works with namespaced modules
-  - requires a lot of boilerplate
-  - would be less if you keep components small
-  - but makes assertions more intuitive IMO
-
 ## Stubbing components
 - topics: Vue, vue-test-utils, form input bindings (v-model)
 - show component that will fail
@@ -92,6 +78,21 @@
   - create a wrapper in each test w/ factory function
   - I apply this to Vuex config
 
+## Testing Vuex in components
+- topics: Vuex, namespaced modules
+- component with simple store is straightforward
+    - if a little verbose
+    - this is what they recommend in the vue-test-utils docs
+    - assertions are a bit weird
+    - first arg is "context" just like in a real Vuex action
+- mocking dispatch
+  - simplifies things for larger components
+  - works with namespaced modules
+  - requires a lot of boilerplate
+  - would be less if you keep components small
+  - but makes assertions more intuitive IMO
+
 ## Outro
 - thanks to vue test utils
 - and Edd Yerburgh for his vue testing book (250 pages)
+- questions?

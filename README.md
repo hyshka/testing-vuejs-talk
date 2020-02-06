@@ -6,10 +6,10 @@
 ## Slides
 View the `SLIDES.md` file for my presentation.
 
-To view in presentation mode install [mdp](https://github.com/visit1985/mdp) and use this command:
+To view in presentation mode install [mdv](https://github.com/smketterer/mdv/) and use this command:
 
 ```
-mdp -ifc SLIDES.md
+npm run start SLIDES.md
 ```
 
 ## Special thanks to...

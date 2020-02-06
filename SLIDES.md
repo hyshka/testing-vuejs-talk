@@ -1,8 +1,8 @@
 %title: Unit Testing Vue.js Applications
 %author: Bryan Hyshka
-%date: 2020-02-01
+%date: 2020-02-06
 
-# Unit Testing Vue.js Applications
+!!! Unit Testing Vue.js Applications
 
               _   _       _ _     _____         _   _
              | | | |_ __ (_) |_  |_   _|__  ___| |_(_)_ __   __ _
@@ -23,23 +23,39 @@
            /_/   \_\ .__/| .__/|_|_|\___\__,_|\__|_|\___/|_| |_|___/
                    |_|   |_|
 
----
-
-## Working knowledge
+!!! Working knowledge
 
 - Vue.js is a framework for building user interfaces and single-page applications
 
+
 - Vuex is a state management pattern and library inspired by Flux + Redux
 
-- Jest is a testing framework
+
+- Jest is a popular JavaScript testing framework
+
 
 - Vue Test Utils is the official unit testing library for Vue.js
 
----
 
-## Mounting components
+!!! Overview
 
-```
+- Mounting components
+
+
+- Testing asynchronous DOM updates and Promises
+
+
+- Stubbing components
+
+
+- Mocking methods injected into the Vue instance
+
+
+- Mocking the Vuex store within components
+
+!!! Mounting components
+
+```javascript
 const Count = {
   props: ["count"],
   template: "<span>{{count}}</span>",
@@ -59,25 +75,32 @@ const ButtonCounter = {
 }
 ```
 
----
+!!! Using mount vs shallowMount
 
-## Using `mount` vs `shallowMount`
+```javascript
+import { mount, shallowMount } from "@vue/test-utils"
 
-```
 const wrapper = mount(ButtonCounter);
 wrapper.html()
+
 >> <button>You clicked me <span>0</span> times.</button>
+
+---
 
 const wrapper = shallowMount(ButtonCounter);
 wrapper.html()
+
 >> <button>You clicked me <count-stub count="0"></count-stub> times.</button>
 ```
 
----
+!!! Mounting with external dependencies
 
-## Mounting with external dependencies
+```javascript
+import Vue from "vue"
+import Vue2Filters from "vue2-filters"
 
-```
+Vue.use(Vue2Filters)
+
 const Message = {
   data() {
     return {
@@ -88,13 +111,14 @@ const Message = {
 }
 ```
 
----
+!!! Using createLocalVue
 
-## Using `createLocalVue`
-
-```
+```javascript
 const wrapper = shallowMount(Message)
+
 >> [Vue warn]: Failed to resolve filter: placeholder
+
+---
 
 import { createLocalVue, shallowMount } from "@vue/test-utils"
 import Vue2Filters from "vue2-filters"
@@ -107,35 +131,60 @@ const wrapper2 = shallowMount(Message, {
 })
 
 wrapper.html()
+
 >> <div>Text if msg is missing</div>
 ```
 
----
+!!! Testing asynchronous DOM updates and Promises
 
-## Testing asynchronous DOM updates and Promises
+```javascript
+const Count = {
+  props: ["count"],
+  template: "<span>{{count}}</span>",
+}
 
+const ButtonCounter = {
+  components: {
+    Count,
+  },
+  data() {
+    return {
+      count: 0,
+    };
+  },
+  template:
+    '<button v-on:click="count++">You clicked me <Count :count="count"/> times.</button>',
+}
 ```
+
+!!! Testing asynchronous DOM updates and Promises
+
+```javascript
 const wrapper = shallowMount(ButtonCounter)
 wrapper.trigger("click")
-
 wrapper.text()
->> You clicked me 1 times.
+
+>> You clicked me 0 times.
+
+---
+
+import Vue from "vue"
 
 it("using nextTick", async () => {
     const wrapper = shallowMount(ButtonCounter)
     wrapper.trigger("click")
+
     await Vue.nextTick()
 
     wrapper.text()
+
     >> You clicked me 1 times.
 })
 ```
 
----
+!!! Testing asynchronous DOM updates and Promises
 
-## Testing asynchronous DOM updates and Promises
-
-```
+```javascript
 const AsyncButtonCounter = {
   data() {
     return {
@@ -152,38 +201,36 @@ const AsyncButtonCounter = {
   },
 }
 ```
----
 
-## Testing asynchronous DOM updates and Promises
+!!! Testing asynchronous DOM updates and Promises
 
-```
+```javascript
 const wrapper = shallowMount(AsyncButtonCounter)
 wrapper.trigger("click")
 
 wrapper.text()
+
 >> You clicked me 0 times.
 ```
 
----
+!!! Testing asynchronous DOM updates and Promises
 
-## Testing asynchronous DOM updates and Promises
-
-```
+```javascript
 import flushPromises from "flush-promises"
 
 const wrapper = shallowMount(AsyncButtonCounter)
 wrapper.trigger("click")
+
 await flushPromises()
 
 wrapper.text()
+
 >> You clicked me 1 times.
 ```
 
----
+!!! Stubbing components
 
-## Stubbing components
-
-```
+```javascript
 const DateForm = {
   data() {
     return {
@@ -198,30 +245,28 @@ const DateForm = {
 }
 ```
 
----
+!!! Stubbing components
 
-## Stubbing components
-
-```
+```javascript
 const wrapper = mount(DateForm, {
   localVue,
 })
 
 wrapper.html()
+
 >> <form><div class="el-date-editor el-input el-input--prefix el-input--suffix el-date-editor--date"><!----><input type="text" autocomplete="off" name="" class="el-input__inner"><span class="el-input__prefix"><i class="el-input__icon el-icon-date"></i><!----></span><span class="el-input__suffix"><span class="el-input__suffix-inner"><i class="el-input__icon"></i><!----><!----><!----><!----></span><!----></span><!----><!----></div></form>
 
 const input = wrapper.find("input")
 input.setValue("2020-03-05")
 
 wrapper.vm.date
+
 >> "2020-02-06"
 ```
 
----
+!!! Stubbing components
 
-## Stubbing components
-
-```
+```javascript
 const DatePickerStub = {
   props: ["value"],
   template: `
@@ -237,20 +282,20 @@ const wrapper = shallowMount(DateForm, {
 })
 
 wrapper.html()
+
 >> <form><input></form>
 
 const input = wrapper.find("input")
 input.setValue("2020-03-05")
 
 wrapper.vm.date
+
 >> "2020-03-05"
 ```
 
----
+!!! Mocking methods injected into the Vue instance
 
-## Mocking methods injected into the Vue instance
-
-```
+```javascript
 const LoginView = {
   methods: {
     submitForm() {
@@ -278,11 +323,9 @@ const wrapper = shallowMount(LoginView, {
 })
 ```
 
----
+!!! Mocking methods for each test is more cumbersome with larger components
 
-## Mocking methods for each test is more cumbersome with larger components
-
-```
+```javascript
 const store = new Vuex.Store({
   modules: {
     auth: {
@@ -315,11 +358,9 @@ const wrapper = shallowMount(Signup, {
 })
 ```
 
----
+!!! Using factory functions to keep it DRY
 
-## Using factory functions to keep it DRY
-
-```
+```javascript
 import merge from "lodash/merge"
 
 function createWrapper(overrides) {
@@ -346,11 +387,9 @@ const mocks = {
 const wrapper = createWrapper({ mocks })
 ```
 
----
+!!! Testing Vuex in components
 
-## Testing Vuex in components
-
-```
+```javascript
 const VuexButtonCounter = {
   template: `<button v-on:click="increment('hello')">You clicked me {{count}} times.</button>`,
   computed: {
@@ -364,11 +403,9 @@ const VuexButtonCounter = {
 }
 ```
 
----
+!!! Recommended in the Vue Test Utils docs
 
-## Recommended in the Vue Test Utils docs
-
-```
+```javascript
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
@@ -388,14 +425,13 @@ const wrapper = shallowMount(VuexButtonCounter, {
 wrapper.trigger("click")
 
 expect(actions.increment).toHaveBeenCalledWith(expect.anything(), "hello")
+
 >> {"commit": [Function boundCommit], "dispatch": [Function boundDispatch], "getters": {}, "rootGetters": {}, "rootState": {"count": 0}, "state": {"count": 0}}, "hello"
 ```
 
----
+!!! A more complex example
 
-## A more complex example
-
-```
+```javascript
 const VuexNamespacedButtonCounter = {
   template: `<button v-on:click="increment('hello')">You clicked me {{count}} times.</button>`,
   computed: {
@@ -409,11 +445,9 @@ const VuexNamespacedButtonCounter = {
 }
 ```
 
----
+!!! Mocking store.dispatch
 
-## Mocking `store.dispatch`
-
-```
+```javascript
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
@@ -441,17 +475,21 @@ const wrapper = shallowMount(VuexNamespacedButtonCounter, {
 wrapper.trigger("click")
 
 expect(store.dispatch).toHaveBeenCalledWith("counter/increment", "hello")
+
 >> "counter/increment", "hello"
 ```
 
----
+!!! References
 
-## References
+- Vue Test Utils: https://vue-test-utils.vuejs.org
 
-- [Vue Test Utils](https://vue-test-utils.vuejs.org/)
 
--  [Testing Vue.js Applications book](https://www.manning.com/books/testing-vue-js-applications) by [Edd Yerburgh](https://github.com/eddyerburgh)
+-  Testing Vue.js Applications book (https://www.manning.com/books/testing-vue-js-applications) by Edd Yerburgh(https://github.com/eddyerburgh)
 
-- [Flush promises library](https://github.com/kentor/flush-promises)
 
-- [These slides](https://github.com/hyshka/@todo)
+- Flush promises library: https://github.com/kentor/flush-promises
+
+
+- These slides: https://github.com/hyshka/testing-vuejs-talk
+
+!!!
