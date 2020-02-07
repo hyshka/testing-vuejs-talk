@@ -1,7 +1,7 @@
 # unit-testing-vuejs-talk
 
 ## Overview
-- TBD
+A summary of my lessons learned with Vue Test Utils while starting on a project with 0% code coverage.
 
 ## Slides
 View the `SLIDES.md` file for my presentation.
