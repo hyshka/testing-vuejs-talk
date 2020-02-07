@@ -12,6 +12,10 @@ To view in presentation mode install [mdv](https://github.com/smketterer/mdv/) a
 npm run start SLIDES.md
 ```
 
+## Examples
+
+See the `vue-unit-test-examples/tests/unit` folder for some examples based off my talk using Vue Test Utils and Jest.
+
 ## Special thanks to...
 - [Vue Test Utils and it's maintainers and contributors](https://vue-test-utils.vuejs.org/)
 - [Edd Yerburgh](https://github.com/eddyerburgh) for his [Testing Vue.js Applications book](https://www.manning.com/books/testing-vue-js-applications)
